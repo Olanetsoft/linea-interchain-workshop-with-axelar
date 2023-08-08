@@ -69,7 +69,7 @@ export default function Home() {
 
       <main className="flex-grow flex flex-col items-center justify-center">
         <h1 className="text-4xl font-bold mb-8 text-center">
-          Fullstack Interchain dApp with{" "}
+          Fullstack Interchain dApp on Linea with{" "}
           <span className="text-blue-500">Axelar 🔥 </span>
         </h1>
         <p className=" mb-8 text-center max-w-3xl text-gray-500">
@@ -122,7 +122,7 @@ export default function Home() {
       <ToastContainer />
       <footer className="flex justify-center items-center py-8 border-t border-gray-300">
         <a
-          href="https://github.com/Olanetsoft/fullstack-interchain-dapp"
+          href="https://github.com/Olanetsoft/Linea-interchain-workshop-with-Axelar"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center font-bold text-blue-500 text-lg"
