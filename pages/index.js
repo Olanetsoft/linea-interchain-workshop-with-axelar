@@ -7,6 +7,12 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { ethers } from "ethers";
+import {
+  AxelarQueryAPI,
+  Environment,
+  EvmChain,
+  GasToken,
+} from "@axelar-network/axelarjs-sdk";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
