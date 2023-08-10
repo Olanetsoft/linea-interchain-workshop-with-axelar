@@ -1,11 +1,11 @@
 Fullstack Interchain dApp on Linea with Axelar 🔥
 
-Step 1
+## Step 1
 - Clone the project
 - Install dependencies with `npm install`
 - Run the project with `npm run dev`
 
-Step 2
+## Step 2
 - Create a new folder called `truffle` with the following command `mkdir truffle`
 - cd into the folder `cd truffle`
 - Run the following command to install truffle globally, initialize a new truffle project with the default configuration and run tests:
@@ -15,7 +15,7 @@ truffle init
 truffle test
 ```
 
-Step 3
+## Step 3
 - Create a new solidity file called `SendMessage.sol` in the `contracts` folder
 - Add the following code to the file:
 ```
@@ -86,7 +86,7 @@ contract SendMessage is AxelarExecutable {
 ```
 - To make sure everything is working, run `truffle compile`
 
-Step 4
+## Step 4
 - Create a new `.env` file inside the truffle folder
 - Add the following code to the file:
 ```
@@ -136,7 +136,7 @@ module.exports = {
 };
 ```
 
-Step 5
+## Step 5
 - Create a new file called `1_deploy_contracts.js` in the `migrations` folder
 In this step, we will deploy the contract to the Linea Goerli testnet and Optimism Goerli testnet.
 
@@ -165,7 +165,7 @@ Next, update the gateway address and gas service address to the Optimism Goerli 
 
 Hurrah! We have successfully deployed our contract to the Linea Goerli testnet and Optimism Goerli testnet.
 
-Step 6
+## Step 6
 
 Let's wire up our frontend to our contract.
 
@@ -179,7 +179,7 @@ NEXT_PUBLIC_OPTIMISM_CONTRACT_ADDRESS=
 - Replace the `NEXT_PUBLIC_LINEA_CONTRACT_ADDRESS` with the contract address for the Linea Goerli testnet
 - Replace the `NEXT_PUBLIC_OPTIMISM_CONTRACT_ADDRESS` with the contract address for the Optimism Goerli testnet
 
-Step 7
+## Step 7
 - We need to import the contract abi and the contract addresses and Optimism RPC from the `.env` file. Navigate to the `pages/index.js` file and update the file with the following code:
 ```
 //...
@@ -200,7 +200,7 @@ export default function Home() {
 }
 ```
 
-Step 8
+## Step 8
 
 In this step, we will implement the write functionality and the gas estimator to send message cross chain from Linea to Optimism.
 
@@ -291,7 +291,7 @@ export default function Home() {
 }
 ```
 
-Step 9
+## Step 9
 Update the input(textarea) field and the button with the following code:
 ```
 //...
@@ -318,7 +318,7 @@ Send
 ```
 Hurrah! We have successfully implemented the write functionality and the gas estimator to send message cross chain from Linea to Optimism.
 
-Step 10
+## Step 10
 
 In this step, we will implement the read functionality to read the message from the Optimism Goerli testnet.
 
@@ -369,7 +369,7 @@ export default function Home() {
 }
 ```
 
-Step 11
+## Step 11
 
 Update the `return` statement with the following code:
 ```
@@ -415,6 +415,6 @@ Time to test the application.
 
 We have built a simple application that allows users to send messages cross-chain from Linea to Optimism.
 
-What Next?
+## What Next?
 It's up to you; check out our documentation to learn more about [Axelar General Message Passing](https://docs.axelar.dev/dev/general-message-passing/overview).
 
