@@ -1,7 +1,7 @@
 Fullstack Interchain dApp on Linea with Axelar 🔥
 
 ## Step 1
-- Clone the project
+- Clone the project, make sure you are on the `start` branch
 - Install dependencies with `npm install`
 - Run the project with `npm run dev`
 
