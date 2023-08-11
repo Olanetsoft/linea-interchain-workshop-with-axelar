@@ -16,13 +16,119 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+////////////////////////////////////////////////////////////////////////////////
+
+import SendMessageContract from "../truffle/build/contracts/SendMessage.json";
+
+const LINEA_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_LINEA_CONTRACT_ADDRESS;
+const OPTIMISM_CONTRACT_ADDRESS =
+  process.env.NEXT_PUBLIC_OPTIMISM_CONTRACT_ADDRESS;
+const OPTIMISM_RPC_URL = process.env.NEXT_PUBLIC_OPTIMISM_RPC_URL;
+
+////////////////////////////////////////////////////////////////////////////////
+
 export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
 
+  ////////////////////////////////////////////////////////////////////////////////
+  const [message, setMessage] = useState(""); // State variable to hold the message content
+  const api = new AxelarQueryAPI({ environment: Environment.TESTNET });
+  const [gasFee, setGasFee] = useState(0);
+
+  const [sourceChain, setSourceChain] = useState(""); // State variable to hold the source chain
+  const [value, setValue] = useState(""); // State variable to hold the value
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  // Estimate Gas
+  const gasEstimator = async () => {
+    const gas = await api.estimateGasFee(
+      EvmChain.LINEA,
+      EvmChain.OPTIMISM,
+      GasToken.ETH,
+      700000,
+      2
+    );
+    setGasFee(gas);
+  };
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  const { config } = usePrepareContractWrite({
+    // Calling a hook to prepare the contract write configuration
+    address: LINEA_CONTRACT_ADDRESS, // Address of the LINEA contract
+    abi: SendMessageContract.abi, // ABI (Application Binary Interface) of the contract
+    functionName: "sendMessage", // Name of the function to call on the contract
+    args: ["optimism", OPTIMISM_CONTRACT_ADDRESS, message], // Arguments to pass to the contract function
+    value: gasFee, // Value to send with the transaction
+  });
+
+  const { data: useContractWriteData, write } = useContractWrite(config); // Calling a hook to get contract write data and the write function
+
+  const { data: useWaitForTransactionData, isSuccess } = useWaitForTransaction({
+    // Calling a hook to wait for the transaction to be mined
+    hash: useContractWriteData?.hash, // Hash of the transaction obtained from the contract write data
+  });
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  const handleSendMessage = () => {
+    write(); // Initiating the contract call
+
+    toast.info("Sending message...", {
+      // Displaying a toast notification
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+    });
+  };
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  const provider = new ethers.providers.JsonRpcProvider(OPTIMISM_RPC_URL);
+  const contract = new ethers.Contract(
+    OPTIMISM_CONTRACT_ADDRESS,
+    SendMessageContract.abi,
+    provider
+  );
+
+  async function readDestinationChainVariables() {
+    try {
+      const value = await contract.message();
+      const sourceChain = await contract.sourceChain();
+
+      setValue(value.toString());
+      setSourceChain(sourceChain);
+    } catch (error) {
+      console.log(error);
+      toast.error("Error reading message");
+    }
+  }
+
   useEffect(() => {
+    gasEstimator();
+    readDestinationChainVariables();
     const body = document.querySelector("body");
     darkMode ? body.classList.add("dark") : body.classList.remove("dark");
-  }, [darkMode]);
+
+    ////////////////////////////////////////////////////////////////////////////////
+    isSuccess
+      ? toast.success("Message sent!", {
+          position: "top-right",
+          autoClose: 7000,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+        })
+      : useWaitForTransactionData?.error || useContractWriteData?.error
+      ? toast.error("Error sending message")
+      : null;
+  }, [darkMode, useContractWriteData, useWaitForTransactionData]);
 
   const handleToggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -75,7 +181,7 @@ export default function Home() {
 
       <main className="flex-grow flex flex-col items-center justify-center">
         <h1 className="text-4xl font-bold mb-8 text-center">
-          Fullstack Interchain dApp with{" "}
+          Fullstack Interchain dApp on Linea with{" "}
           <span className="text-blue-500">Axelar 🔥 </span>
         </h1>
         <p className=" mb-8 text-center max-w-3xl text-gray-500">
@@ -91,15 +197,19 @@ export default function Home() {
               type="text"
               placeholder="Message"
               className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
+              onChange={(e) => setMessage(e.target.value)}
             />
-            <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-full">
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-full"
+              onClick={handleSendMessage}
+            >
               Send
             </button>
           </div>
 
           <div className="border border-gray-300 rounded-lg p-8 m-2 w-2/5">
             <h2 className="text-2xl font-bold mb-4">Response 🎉 </h2>
-            {"" ? (
+            {value ? (
               <>
                 <p className="font-semibold mb-4">
                   From:{" "}
@@ -111,7 +221,7 @@ export default function Home() {
                 <p className="font-semibold mb-4">
                   To:{" "}
                   <span className="font-normal text-gray-500">
-                    {sourceChain ? "Avalanche" : null}
+                    {sourceChain ? "Optimism" : null}
                   </span>
                 </p>
                 <p className="font-semibold mb-4">
