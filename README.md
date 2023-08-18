@@ -157,7 +157,7 @@ module.exports = function (deployer) {
   deployer.deploy(SendMessage, gatewayAddress, gasService);
 };
 ```
-- Run `truffle migrate --network goerli` to deploy the contract to the Linea Goerli testnet
+- Run `truffle migrate --network linea_goerli` to deploy the contract to the Linea Goerli testnet
 
 Next, update the gateway address and gas service address to the Optimism Goerli testnet addresses and run `truffle migrate --network optimism` to deploy the contract to the Optimism Goerli testnet
 
